@@ -12,3 +12,5 @@ An optimizer abstract class is defined to be able to initialize different types 
 A batch loader class is also present that takes data and can split it into batches. The batch loader can be looped through, similar to DataLoader in Pytorch.
 
 The main function includes a custom toy classification dataset that demonstrates the functionality of the above.
+
+The dataset can be split into train, validation, and test using a function from utils.py.
