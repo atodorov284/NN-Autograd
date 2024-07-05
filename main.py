@@ -3,7 +3,7 @@ from mlp import MLP
 from optimizer import SGD
 from batch_loader import BatchLoader
 import numpy as np
-
+from utils import train_validation_test_split
 
 def naive_example():
     a = Node(1)
@@ -26,7 +26,7 @@ def mlp_example():
 def mlp_learning():
     classes = 2
     size = 1000
-    noise = 0.5
+    noise = 0.1
     
     y = np.random.randint(0, classes, size)
     class_1 = (np.random.rand(size) + y) / classes
@@ -36,24 +36,29 @@ def mlp_learning():
     network = MLP(2, [4, 4, 1])
     
     optimizer = SGD(network.parameters(), 0.01)
+    X_train, y_train, X_val, y_val, X_test, y_test = train_validation_test_split(X, y)    
     
-    loader = BatchLoader(X, y, 10)
+    loader = BatchLoader(X_train, y_train, 10)
     
-    for epoch in range(100):
+    for epoch in range(20):
         for batch_x, batch_y in loader:
             y_pred = [network(x) for x in batch_x]
             loss = sum((y_hat - y_true) ** 2 for y_true, y_hat in zip(batch_y, y_pred))
+            
             network.zero_grad()
             
             loss.backward()
 
             optimizer.step()
-
-        print(f"Epoch: {epoch}, Loss: {loss.data}")
+        print(f"Epoch: {epoch}, Training Loss: {loss.data}")
         
-    for i, y_hat in enumerate(y_pred):
-        print(f"Predicted value for input {i}: {y_hat.data}")
-
-
+        y_val_pred = [network(x) for x in X_val]
+        val_loss = sum((y_hat - y_true) ** 2 for y_true, y_hat in zip(y_val, y_val_pred))
+        print(f"Epoch: {epoch}, Validation Loss: {val_loss.data}")
+        
+    y_test_pred = [network(x) for x in X_test]
+    test_loss = sum((y_hat - y_true) ** 2 for y_true, y_hat in zip(y_test, y_test_pred))
+    print(f"Final Test Loss: {test_loss.data}")
+    
 if __name__ == "__main__":
     mlp_learning()

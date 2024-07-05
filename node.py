@@ -101,3 +101,14 @@ class Node:
         self.gradient = 1.0
         for node in reversed(topo):
             node._backward()
+            
+    def mean(self) -> Node:
+        out = Node(self.data.mean(), (self,), "mean")
+
+        def _backward():
+            # Gradient rule for mean
+            self.gradient += out.gradient / self.data.size
+
+        out._backward = _backward
+
+        return out

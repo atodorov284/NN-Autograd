@@ -1,7 +1,5 @@
 from node import Node
 import random
-from typing import Union
-
 
 class Neuron:
     def __init__(self, n_input: int) -> None:
@@ -22,7 +20,7 @@ class Layer:
     def __init__(self, n_input: int, n_output: int) -> None:
         self.neurons = [Neuron(n_input) for _ in range(n_output)]
 
-    def __call__(self, x: Neuron) -> Union[Neuron, list[Neuron]]:
+    def __call__(self, x: Neuron) -> Neuron | list[Neuron]:
         outs = [n(x) for n in self.neurons]
         return outs[0] if len(outs) == 1 else outs
 
