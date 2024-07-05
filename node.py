@@ -83,7 +83,7 @@ class Node:
         out._backward = _backward
 
         return out
-
+    
     def backward(self) -> None:
         # Topological sort to visit each node once and compute its gradient
         topo = []

@@ -31,9 +31,9 @@ class Layer:
 
 
 class MLP:
-    def __init__(self, n_input: int, n_output) -> None:
-        sz = [n_input] + n_output
-        self.layers = [Layer(sz[i], sz[i + 1]) for i in range(len(n_output))]
+    def __init__(self, n_input: int, n_output: list[int]) -> None:
+        size = [n_input] + n_output
+        self.layers = [Layer(size[i], size[i + 1]) for i in range(len(n_output))]
 
     def __call__(self, x: Layer):
         for layer in self.layers:
@@ -42,3 +42,8 @@ class MLP:
 
     def parameters(self) -> list[Layer]:
         return [p for layer in self.layers for p in layer.parameters()]
+    
+    def zero_grad(self) -> None:
+        for p in self.parameters():
+            p.gradient = 0.0
+
