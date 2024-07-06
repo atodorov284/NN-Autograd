@@ -4,6 +4,7 @@ from optimizer import SGD
 from batch_loader import BatchLoader
 import numpy as np
 from utils import train_validation_test_split
+from loss import SquaredLoss
 
 
 def naive_example():
@@ -40,12 +41,12 @@ def mlp_learning():
     X_train, y_train, X_val, y_val, X_test, y_test = train_validation_test_split(X, y)
 
     loader = BatchLoader(X_train, y_train, 10)
-
+    loss = SquaredLoss()
     for epoch in range(20):
         for batch_x, batch_y in loader:
             y_pred = [network(x) for x in batch_x]
-            loss = sum((y_hat - y_true) ** 2 for y_true, y_hat in zip(batch_y, y_pred))
-
+            # loss = sum((y_hat - y_true) ** 2 for y_true, y_hat in zip(batch_y, y_pred))
+            loss(y_pred, batch_y)
             network.zero_grad()
 
             loss.backward()
@@ -54,14 +55,12 @@ def mlp_learning():
         print(f"Epoch: {epoch}, Training Loss: {loss.data}")
 
         y_val_pred = [network(x) for x in X_val]
-        val_loss = sum(
-            (y_hat - y_true) ** 2 for y_true, y_hat in zip(y_val, y_val_pred)
-        )
-        print(f"Epoch: {epoch}, Validation Loss: {val_loss.data}")
+        val_loss = loss(y_val_pred, y_val)
+        print(f"Epoch: {epoch}, Validation Loss: {val_loss}")
 
     y_test_pred = [network(x) for x in X_test]
-    test_loss = sum((y_hat - y_true) ** 2 for y_true, y_hat in zip(y_test, y_test_pred))
-    print(f"Final Test Loss: {test_loss.data}")
+    test_loss = loss(y_test_pred, y_test)
+    print(f"Final Test Loss: {test_loss}")
 
 
 if __name__ == "__main__":
